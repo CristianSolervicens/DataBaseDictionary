@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block title %}Diccionario de Datos {{ db_name }} {% endblock %}
+
+{% block style%}
+:root {
+    margin: 0;
+    padding: 0;
+    --font-family: Arial, Helvetica, sans-serif;
+
+    --bg: #fff;
+    --accent-bg: #e6e6f6;
+    --text: #212121;
+    --header-cells: #F0F0F0;
+    --text-light: #727272;
+    --light-cells: #F5F5F5;
+    --border: #d8dae1;
+    --accent: #4b7fcc;
+    --code: #D0D0D0;
+    --preformatted: #444;
+    --marked: #ffdd33;
+    --marked2: #c64832b1;
+    --disabled: #efefef;
+    --brightness: 1;
+}
+
+body, html {
+    /* Set the font globally */
+    font-family: var(--font-family);
+    scroll-behavior: smooth;
+    margin-left: 30px
+  }
+  
+table {
+    border-collapse: collapse;
+    display: block;
+    margin: 0.5rem 0;
+    overflow: auto;
+    width: 100%;
+}
+
+td,
+th,
+th tr {
+    border: 1px solid var(--preformatted);
+    text-align: left;
+    padding: 0.3rem;
+}
+
+th,
+th tr {
+    background: var(--header-cells);
+    border:2px solid var(--preformatted);
+    font-weight: bold;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+td,
+td tr {
+    background: var(--light-cells);
+}
+
+table caption {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.enfatizar{
+    background: var(--code);
+}
+
+.border {
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    padding: 1rem 1rem 1rem 1rem;
+}
+
+.center {
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.left label {
+    display: inline-block;
+    width: 20%;
+}
+.left select {
+    display: inline-block;
+    width: 90%;
+}
+
+.column{
+    float: left;
+    width: 50%;
+}
+
+.tri-column {
+    display: list-item;
+    list-style-type: circle;
+    float: left;
+    width: 30%;
+  }
+  
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  .small-font{
+    font-size: 8px;
+  }
+
+  .margin_left{
+    margin-left: 40px;
+  }
+
+  .margin_global{
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+
+{% endblock%}
+
+{% block content %}
+
+    <div id="indice">
+        <hr>
+        <h1 class="center">Indice</h1>
+        
+        {% if not args.no_tables %}
+            <br>
+            <div><a href="#tablas"><h2>Tablas</h2></a></div>
+            <div class="row">
+                {% for table in tables %}
+                    <div class="tri-column"><a href="#{{ table[0] }}.{{ table[1] }}">{{ table[0] }}.{{ table[1] }}</a></div>
+                {% endfor%}            
+            </div>
+        {% endif %}
+
+        {% if not args.no_views %}
+            <br>
+            <div><a href="#vistas"><h2>Vistas</h2></a></div>
+            <div class="row">
+                {% for view in views %}
+                    <div class="tri-column"><a href="#{{ view[0] }}.{{ view[1] }}">{{ view[0] }}.{{ view[1] }}</a></div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if not args.no_procs %}
+            <br>
+            <div><a href="#procedimientos"><h2>Procedimientos</h2></a></div>
+            <div class="row">
+                {% for proc in procs %}
+                    <div class="tri-column"><a href="#{{ proc[0] }}.{{ proc[1] }}">{{ proc[0] }}.{{ proc[1] }}</a></div>
+                {% endfor %}    
+            </div>
+        {% endif %}
+
+        {% if not args.no_functions %}
+            <br>
+            <div><a href="#scalar_funcs"><h2>Funciones Escalares</h2></a></div>
+            <div class="row">
+                {% for func in scalar_funcs %}
+                    <div class="tri-column"><a href="#{{ func[0] }}.{{ func[1] }}">{{ func[0] }}.{{ func[1] }}</a></div>
+                {% endfor %}
+            </div>
+
+            <br>
+            <div><a href="#tab_funcs"><h2>Funciones Tabulares</h2></a></div>
+            <div class="row">
+                {% for func in tbl_funcs %}
+                    <div class="tri-column"><a href="#{{ func[0] }}.{{ func[1] }}">{{ func[0] }}.{{ func[1] }}</a></div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+    </div>
+    <hr>
+    <br>
+    <br>
+    
+    {% if not args.no_tables %}
+        <h2 id="tablas"><a href="#indice">Tablas</a></h2>
+        <br>
+        <hr>
+        {% for table in tables %}
+            <div class="bold" id="{{ table[0] }}.{{ table[1] }}"><a href="#indice">Table : {{ table[0] }}.{{ table[1]}}</a></div>
+            <div class="enfatizar">Comentario: {{ table[2] }} </div>
+            <br>
+            {%if table[2] not in status %}
+            <table class="tdTableSection">
+                <tr>
+                    <th>Columna</th>
+                    <th>Tipo</th>
+                    <th>Nullable</th>
+                    <th>Default</th>
+                    <th>PK</th>
+                    <th>FK</th>
+                    <th>Unique Key</th>
+                    <th>Check</th>
+                    <th>Computed</th>
+                    <th>Comments</th>
+                </tr>
+                    {% for col in table[3] %}
+                    <tr>
+                        <td>{{ col["column"] }}</td>
+                        <td>{{ col["tipo"] }}</td>
+                        <td>{{ col["nullable"] }}</td>
+                        <td>{{ col["default"] }}</td>
+                        <td>{{ col["pk"] }}</td>
+                        <td>{{ col["fk"] }}</td>
+                        <td>{{ col["uniquekey"] }}</td>
+                        <td>{{ col["check"] }}</td>
+                        <td>{{ col["computed"] }}</td>
+                        <td>{{ col["comments"] }}</td>
+                    </tr>
+                    {% endfor %}
+                
+            </table>
+            <br>
+            {% endif %}
+            <br>
+        {% endfor %}
+    {% endif %}
+
+    {% if not args.no_views %}
+        <br>
+        <h2 id="vistas"><a href="#indice">Vistas</a></h2>
+        <br>
+        <hr>
+        {% for view in views %}
+            <div class="bold" id="{{ view[0] }}.{{ view[1] }}"><a href="#indice">View : {{ view[0] }}.{{ view[1] }}</a></div>
+            <div class="enfatizar">Comentario: {{ view[2] }} </div>
+            <br>
+            {% if view[2] not in status %}
+            <table class="tdTableSection">
+                <tr>
+                    <th>Columna</th>
+                    <th>Tipo</th>
+                    <th>Nullable</th>
+                    <th>Comment</th>
+                </tr>
+                    {% for col in view[3] %}
+                    <tr>
+                        <td>{{ col["columna"] }}</td>
+                        <td>{{ col["tipo"] }}</td>
+                        <td>{{ col["nullable"] }}</td>
+                        <td>{{ col["comment"] }}</td>
+                    </tr>
+                    {% endfor %}
+            </table>
+            <br>
+            {% endif %}
+            <br>
+        {% endfor %}
+    {% endif %}
+
+    {% if not args.no_procs %}
+        <br>
+        <h2 id="procedimientos"><a href="#indice">Procedimientos Almacenados</a></h2>
+        <br>
+        <hr>
+        {% for proc in procs %}
+            <div class="bold" id="{{ proc[0] }}.{{ proc[1] }}"><a href="#indice">Procedimiento: {{ proc[0] }}.{{ proc[1] }}</a></div>
+            <div class="enfatizar">Comentario: {{ proc[2] }}</div>
+            <br>
+        {% endfor %}
+    {% endif %}
+
+    {% if not args.no_functions %}
+        <br>
+        <h2 id="scalar_funcs"><a href="#indice">Funciones Escalares</a></h2>
+        <br>
+        <hr>
+        {% for func in scalar_funcs %}
+            <div class="bold" id="{{ func[0] }}.{{ func[1] }}"><a href="#indice">Función: {{ func[0] }}.{{ func[1] }}</a></div>
+            <div class="enfatizar">Comentario: {{ func[2] }}</div>
+            <br>
+        {% endfor %}
+        <br>
+        <h2 id="tab_funcs"><a href="#indice">Funciones Tabulares</a></h2>
+        <br>
+        <hr>
+        {% for func in tbl_funcs %}
+            <div class="bold" id="{{ func[0] }}.{{ func[1] }}"><a href="#indice"> Función: {{ func[0] }}.{{ func[1] }}</a></div>
+            <div class="enfatizar">Comentario: {{ func[2] }}</div>
+            <br>
+        {% endfor %}
+    {% endif %}
+
+    <div>Fin del Diccionario de Datos</div>
+    <br>
+    <hr>
+    <div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAB00lEQVRYw71X25HDIAxcZdLAtZAWcAsuIS3EJfhKyJVAWklKMC2khZSg+4jt8JAM2L7TjCcxGHa1QgII242jd6oZTAuTkgIStDOH+ERURYIU0OC/D+IBJOBrSFDO8wlknBTMDCKaf6e2tSQOAiHGP9oxijFprCUvtRDU2CEC5lRJkqTdXQF1TdjBBKB2MDORv1iECfiSdY3Dnmkogncvl3TaLxOQCPoGM7XRtkJ0B+zT6t6fuoCIpE4JCV0BawFz00e6S0rEXYIxJSRoTewlIjOZp60icdycRx6YhVldB/axKARe2vJqBYxJs8A5k1VjFwUk8Kld65NsSYWKENhiglsPJGwH402u1YIuH5KC2rBhEdpdlFAL0cDIKJBXYirTfl2JVdghDWUlusbBDsbfG6qygBpKPVwbjqXKmtssCkLRef0fss0DQOvtjtex4zvELdkyPRJ5ax7eS/vx3gsDVSmA68z6Y37b/Q0UeShKL6UhLdxyCHcw3DhpP7b+jKAIPQ0OJC9l0bW64wyA0Y8PhKcH28HIfbmx+jdCCPq0ZttzFMd+Q9Kew5oQ3wuCD4RzHwHgy0lPq9vToXCu9xm24LbrK1V1WlIKUFUWlJBbe+wHAPwC3nDo"></div>
+    <div class="small-font">Copyright</div>
+    <div class="small-font">Cristian Solervicéns - 2023</div>
+    <br>
+
+{% endblock %}
