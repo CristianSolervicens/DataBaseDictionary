@@ -6,11 +6,14 @@ Cristian Solervicéns C.
 ## Language: Python
 
 ## Description
-```
-Prints the Data Dictionary for SQL Server
-It's based on the "Extended Properties", it works together with SQL-Crypt which allows you to edit the
-Extender Properties for Tables, Views, Stored Procedures, and Functions in an easy and straight way
-```
+
+Create the Data Dictionary for SQL Server Databases in html format.
+
+The output file is called: ***data_dictionary_[DatabaseName].html*** file.
+
+The Data-Dictionay is based on the "Extended Properties", and it works together with SQL-Crypt which allows you to edit the
+Extender Properties for Tables, Views, Stored Procedures, and Functions in a simple and straight forward way
+
 
 ## Dependencies
 
