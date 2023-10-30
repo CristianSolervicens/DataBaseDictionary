@@ -16,7 +16,7 @@
     --light-cells: #F5F5F5;
     --border: #d8dae1;
     --accent: #4b7fcc;
-    --code: #D0D0D0;
+    --code: #E0E0E0;
     --preformatted: #444;
     --marked: #ffdd33;
     --marked2: #c64832b1;
@@ -131,6 +131,10 @@ table caption {
     margin-bottom: 50px;
   }
 
+  .logo{
+    width: {{ logo_width }}px
+  }
+
 {% endblock%}
 
 {% block content %}
@@ -192,13 +196,13 @@ table caption {
     <br>
     <br>
     
-    {% if not args.no_tables %}
+    {% if not args.no_tables and tables %}
         <h2 id="tablas"><a href="#indice">Tablas</a></h2>
         <br>
         <hr>
         {% for table in tables %}
             <div class="bold" id="{{ table[0] }}.{{ table[1] }}"><a href="#indice">Table : {{ table[0] }}.{{ table[1]}}</a></div>
-            <div class="enfatizar">Comentario: {{ table[2] }} </div>
+            <div class="enfatizar"><b>Comentario:</b> {{ table[2] }} </div>
             <br>
             {%if table[2] not in status %}
             <table class="tdTableSection">
@@ -236,14 +240,14 @@ table caption {
         {% endfor %}
     {% endif %}
 
-    {% if not args.no_views %}
+    {% if not args.no_views and views %}
         <br>
         <h2 id="vistas"><a href="#indice">Vistas</a></h2>
         <br>
         <hr>
         {% for view in views %}
             <div class="bold" id="{{ view[0] }}.{{ view[1] }}"><a href="#indice">View : {{ view[0] }}.{{ view[1] }}</a></div>
-            <div class="enfatizar">Comentario: {{ view[2] }} </div>
+            <div class="enfatizar"><b>Comentario:</b> {{ view[2] }} </div>
             <br>
             {% if view[2] not in status %}
             <table class="tdTableSection">
@@ -269,42 +273,49 @@ table caption {
     {% endif %}
 
     {% if not args.no_procs %}
-        <br>
-        <h2 id="procedimientos"><a href="#indice">Procedimientos Almacenados</a></h2>
-        <br>
-        <hr>
-        {% for proc in procs %}
-            <div class="bold" id="{{ proc[0] }}.{{ proc[1] }}"><a href="#indice">Procedimiento: {{ proc[0] }}.{{ proc[1] }}</a></div>
-            <div class="enfatizar">Comentario: {{ proc[2] }}</div>
+        {% if procs %}
             <br>
-        {% endfor %}
+            <h2 id="procedimientos"><a href="#indice">Procedimientos Almacenados</a></h2>
+            <br>
+            <hr>
+            {% for proc in procs %}
+                <div class="bold" id="{{ proc[0] }}.{{ proc[1] }}"><a href="#indice">Procedimiento: {{ proc[0] }}.{{ proc[1] }}</a></div>
+                <div class="enfatizar"><b>Comentario:</b> {{ proc[2] }}</div>
+                <br>
+            {% endfor %}
+        {% endif %}
     {% endif %}
 
     {% if not args.no_functions %}
-        <br>
-        <h2 id="scalar_funcs"><a href="#indice">Funciones Escalares</a></h2>
-        <br>
-        <hr>
-        {% for func in scalar_funcs %}
-            <div class="bold" id="{{ func[0] }}.{{ func[1] }}"><a href="#indice">Función: {{ func[0] }}.{{ func[1] }}</a></div>
-            <div class="enfatizar">Comentario: {{ func[2] }}</div>
+        {% if scalar_funcs %}
             <br>
-        {% endfor %}
-        <br>
-        <h2 id="tab_funcs"><a href="#indice">Funciones Tabulares</a></h2>
-        <br>
-        <hr>
-        {% for func in tbl_funcs %}
-            <div class="bold" id="{{ func[0] }}.{{ func[1] }}"><a href="#indice"> Función: {{ func[0] }}.{{ func[1] }}</a></div>
-            <div class="enfatizar">Comentario: {{ func[2] }}</div>
+            <h2 id="scalar_funcs"><a href="#indice">Funciones Escalares</a></h2>
             <br>
-        {% endfor %}
-    {% endif %}
+            <hr>
+            {% for func in scalar_funcs %}
+                <div class="bold" id="{{ func[0] }}.{{ func[1] }}"><a href="#indice">Función: {{ func[0] }}.{{ func[1] }}</a></div>
+                <div class="enfatizar"><b>Comentario:</b> {{ func[2] }}</div>
+                <br>
+            {% endfor %}
+        {% endif %}
 
-    <br>
+        {% if tbl_funcs %}
+            <br>
+            <h2 id="tab_funcs"><a href="#indice">Funciones Tabulares</a></h2>
+            <br>
+            <hr>
+            {% for func in tbl_funcs %}
+                <div class="bold" id="{{ func[0] }}.{{ func[1] }}"><a href="#indice"> Función: {{ func[0] }}.{{ func[1] }}</a></div>
+                <div class="enfatizar"><b>Comentario:</b> {{ func[2] }}</div>
+                <br>
+            {% endfor %}
+        {% endif%}
+    {% endif %}
+    
     <hr>
-    <div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAB00lEQVRYw71X25HDIAxcZdLAtZAWcAsuIS3EJfhKyJVAWklKMC2khZSg+4jt8JAM2L7TjCcxGHa1QgII242jd6oZTAuTkgIStDOH+ERURYIU0OC/D+IBJOBrSFDO8wlknBTMDCKaf6e2tSQOAiHGP9oxijFprCUvtRDU2CEC5lRJkqTdXQF1TdjBBKB2MDORv1iECfiSdY3Dnmkogncvl3TaLxOQCPoGM7XRtkJ0B+zT6t6fuoCIpE4JCV0BawFz00e6S0rEXYIxJSRoTewlIjOZp60icdycRx6YhVldB/axKARe2vJqBYxJs8A5k1VjFwUk8Kld65NsSYWKENhiglsPJGwH402u1YIuH5KC2rBhEdpdlFAL0cDIKJBXYirTfl2JVdghDWUlusbBDsbfG6qygBpKPVwbjqXKmtssCkLRef0fss0DQOvtjtex4zvELdkyPRJ5ax7eS/vx3gsDVSmA68z6Y37b/Q0UeShKL6UhLdxyCHcw3DhpP7b+jKAIPQ0OJC9l0bW64wyA0Y8PhKcH28HIfbmx+jdCCPq0ZttzFMd+Q9Kew5oQ3wuCD4RzHwHgy0lPq9vToXCu9xm24LbrK1V1WlIKUFUWlJBbe+wHAPwC3nDo"></div>
-    <div class="small-font">Copyright</div>
+    <br>
+    <div><img class="logo" src="data:image/{{ img_ext }};base64,{{ image }}"></div>
+    <div class="small-font">Made By</div>
     <div class="small-font">Cristian Solervicéns - 2023</div>
     <br>
 

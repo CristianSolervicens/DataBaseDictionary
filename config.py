@@ -6,3 +6,5 @@ class Config:
     db_user = "sa"
     db_passwd = "triska"
     tag = "MS_Description"
+    logo = "Frog Full.png"
+    logo_width = "100"

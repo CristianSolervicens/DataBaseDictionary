@@ -6,3 +6,5 @@ modules/__pycache__/
 *.ipynb
 data_dictionary_*
 templates/sample.css
+AnsLogo.png
+prosystem.png

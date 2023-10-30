@@ -1,4 +1,5 @@
 import argparse
+import base64
 import os
 
 from jinja2 import Environment, FileSystemLoader
@@ -56,6 +57,8 @@ def main():
     print("")
     print("Diccionario de Base de Datos")
     print("")
+
+    ext, logo_64 = get_logo(cfg.logo)
     
     db_name = select_db()
     hsql.use_db(db_name)
@@ -125,6 +128,9 @@ def main():
                            ,tbl_funcs=tbl_funcs
                            ,status=status
                            ,args=args
+                           ,img_ext=ext
+                           ,image=logo_64
+                           ,logo_width=cfg.logo_width
                            )
 
     html_file = f"data_dictionary_{db_name}.html"
@@ -135,6 +141,16 @@ def main():
 # ===================================================================
 # Funciones de Búsqueda en BD
 # ===================================================================
+
+def get_logo(file_name: str):
+    """Lee el Logo y retorna la extensión y el contenido en Base64"""
+    res = file_name.split('.')
+    extension = res[len(res)-1]
+    with open(file_name, "rb") as fh:
+        content = fh.read()
+
+    b64_content = base64.b64encode(content)
+    return extension, b64_content.decode("ascii")
 
 
 def get_tables(tag: str):
