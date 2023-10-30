@@ -23,6 +23,27 @@ It depends on :
    pymssql
 ```
 
+## Config.py
+
+It's a very simple file where you put the connection information and a few parameters more.
+
+* db_passwd: if empty the program will ask for the password
+* tag: Is the Tag used for comments on Extended properties in SQL Server
+* logo = Is a image file for the output logo, it will be embeded into, so choose a small one
+* logo_width: expressed in pixels so you can choose the size in which the logo will be displayed.
+
+```
+class Config:
+    db_server = "127.0.0.1"
+    db_origin = "master"
+    db_user = "sa"
+    db_passwd = "my.pass"
+    tag = "MS_Description"
+    logo = "FrogFull.png"
+    logo_width = "50"
+    # logo_width = "100"
+```
+
 ## Usage
 
 Edit *config.py* to set database connection and you can also change the "tag" for the comments from MS_Description (standard for SQL Server) to another value

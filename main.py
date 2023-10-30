@@ -1,6 +1,7 @@
 import argparse
 import base64
 import os
+from getpass import getpass
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -58,6 +59,13 @@ def main():
     print("Diccionario de Base de Datos")
     print("")
 
+    if not os.path.isfile(cfg.logo):
+        print(f"Logo indicado No existe {cfg.logo}")
+        print("Revise el archivo de configuración [config.py]")
+        print("")
+        input(">>")
+        return
+    
     ext, logo_64 = get_logo(cfg.logo)
     
     db_name = select_db()
@@ -535,5 +543,9 @@ def select_db() -> str:
 
 if __name__ == "__main__":
     cfg = Config()
+
+    if cfg.db_passwd == "":
+        cfg.db_passwd = getpass(" Database Password >> ")
+
     hsql = SQL.HSql(cfg.db_server, cfg.db_user, cfg.db_passwd, cfg.db_origin)
     main()
