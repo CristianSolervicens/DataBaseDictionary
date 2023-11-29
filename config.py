@@ -6,5 +6,6 @@ class Config:
     db_passwd = ""
     tag = "MS_Description"
     logo = "FrogFull.png"
-    logo_width = "50"
-    # logo_width = "100"
+    logo = "prosystem.png"
+    # logo_width = "50"
+    logo_width = "100"

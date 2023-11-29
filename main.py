@@ -14,24 +14,25 @@ def main():
 
     # argumentos
     parser = argparse.ArgumentParser(prog="DataDictionary"
-                                     ,description="Imprime el Diccionario de Datos Para SQL Server basado en las Extended Properties MS_Description"
-                                     ,epilog="Cristian Solervicéns - 2003"
+                                     , description="Imprime el Diccionario de Datos Para SQL Server basado en las Extended Properties MS_Description"
+                                     , epilog="Cristian Solervicéns - 2003"
                                     )
     parser.add_argument("--no_procs", help="No despliega información de Procs. Almacenados", action="store_true")
-    parser.add_argument("--no_functions",help="No despliega información de Funciones", action="store_true")
-    parser.add_argument("--no_views",help="No despliega información de Vistas", action="store_true")
+    parser.add_argument("--no_functions", help="No despliega información de Funciones", action="store_true")
+    parser.add_argument("--no_views", help="No despliega información de Vistas", action="store_true")
     parser.add_argument("--no_tables", help="No despliega información de Tablas", action="store_true")
     parser.add_argument("--DEPRECADO"
-                        ,help="Incluye Tablas y Vistas con label [DEPRECADO]", action="store_true")
+                        , help="Incluye Tablas y Vistas con label [DEPRECADO]", action="store_true")
     parser.add_argument("--EN_DESUSO"
-                        ,help="Incluye Tablas y Vistas con label [EN_DESUSOO]", action="store_true")
+                        , help="Incluye Tablas y Vistas con label [EN_DESUSOO]", action="store_true")
     parser.add_argument("--INTERNA"
-                        ,help="Incluye Tablas y Vistas con label [INTERNA]", action="store_true")
+                        , help="Incluye Tablas y Vistas con label [INTERNA]", action="store_true")
     parser.add_argument("--RESPALDO"
-                        ,help="Incluye Tablas y Vistas con label [RESPALDO]", action="store_true")
+                        , help="Incluye Tablas y Vistas con label [RESPALDO]", action="store_true")
     parser.add_argument("--INCLUDE_ALL"
-                        ,help="Incluye Tablas y Vistas con TODOS los label especiales", action="store_true")
-    parser.add_argument("--only_with_comments", help="Sólo objetos Base con comentario", action="store_true") 
+                        , help="Incluye Tablas y Vistas con TODOS los label especiales", action="store_true")
+    parser.add_argument("--only_with_comments", help="Sólo objetos Base con comentario", action="store_true")
+    parser.add_argument("-c", "--index_columns", type=int, default=3)
     args = parser.parse_args()
     # Fin argumentos
 
@@ -126,19 +127,31 @@ def main():
         res = get_view_detail(schema=schema, view=view_name, tag=cfg.tag)
         view.append(res)
 
+    index_column_class = 'tri-column'
+    if args.index_columns == 4:
+        index_column_class = 'cuad-column'
+    if args.index_columns == 3:
+        index_column_class = 'tri-column'
+    if args.index_columns == 2:
+        index_column_class = 'bi-column'
+    if args.index_columns == 1:
+        index_column_class = 'uni-column'
+
+
     env = Environment(loader=FileSystemLoader('templates'))
     template = env.get_template("report.html")
-    html = template.render(db_name=db_name
-                           ,tables=tables
-                           ,views=views
-                           ,procs=procs
-                           ,scalar_funcs=scalar_funcs
-                           ,tbl_funcs=tbl_funcs
-                           ,status=status
-                           ,args=args
-                           ,img_ext=ext
-                           ,image=logo_64
-                           ,logo_width=cfg.logo_width
+    html = template.render(db_name=db_name,
+                           tables=tables,
+                           views=views,
+                           procs=procs,
+                           index_column_class=index_column_class,
+                           scalar_funcs=scalar_funcs,
+                           tbl_funcs=tbl_funcs,
+                           status=status,
+                           args=args,
+                           img_ext=ext,
+                           image=logo_64,
+                           logo_width=cfg.logo_width
                            )
 
     html_file = f"data_dictionary_{db_name}.html"
@@ -150,7 +163,7 @@ def main():
 # Funciones de Búsqueda en BD
 # ===================================================================
 
-def get_logo(file_name: str):
+def get_logo(file_name: str) -> (str, str):
     """Lee el Logo y retorna la extensión y el contenido en Base64"""
     res = file_name.split('.')
     extension = res[len(res)-1]
@@ -161,7 +174,7 @@ def get_logo(file_name: str):
     return extension, b64_content.decode("ascii")
 
 
-def get_tables(tag: str):
+def get_tables(tag: str) -> list:
     """[[schema, table], [schema, table...]]"""
     
     comando = f"""
@@ -183,7 +196,7 @@ def get_tables(tag: str):
     return [[k["schema"], k["name"], isnone(k["comment"], '')] for k in res]
     
 
-def get_views(tag: str):
+def get_views(tag: str) -> list:
     """[[schema, view], [schema, view]...]"""
     comando = f"""
     SELECT [schema] = OBJECT_SCHEMA_NAME(so.object_id)
@@ -204,7 +217,7 @@ def get_views(tag: str):
     return [[k["schema"], k["name"], isnone(k["comment"], '')] for k in res]
 
 
-def get_procs(tag: str):
+def get_procs(tag: str) -> list:
     """[[schema, proc], [schema, proc]...]"""
     comando = f"""
     SELECT [schema] = OBJECT_SCHEMA_NAME(so.object_id)
@@ -225,7 +238,7 @@ def get_procs(tag: str):
     return [[k["schema"], k["name"], isnone(k["comment"], '')] for k in res]
 
 
-def get_scalar_functions(tag: str):
+def get_scalar_functions(tag: str) -> list:
     """[[schema, func, [schema, func]...]"""
     comando = f"""
     SELECT [schema] = OBJECT_SCHEMA_NAME(so.object_id)
@@ -247,7 +260,7 @@ def get_scalar_functions(tag: str):
     return [[k["schema"], k["name"], isnone(k["comment"], '')] for k in res]
 
 
-def get_tbl_functions(tag: str):
+def get_tbl_functions(tag: str) -> list:
     """[[schema, func, [schema, func]...]"""
     comando = f"""
     SELECT [schema] = OBJECT_SCHEMA_NAME(so.object_id)
@@ -269,7 +282,7 @@ def get_tbl_functions(tag: str):
     return [[k["schema"], k["name"], isnone(k["comment"], '')] for k in res]
 
 
-def get_table_detail(schema: str, table: str, tag: str):
+def get_table_detail(schema: str, table: str, tag: str) -> list:
     """[{}...]"""
     comando = f"""
     select 
@@ -432,12 +445,12 @@ def get_table_detail(schema: str, table: str, tag: str):
         hsql.print_error()
         hsql.clear_error()
         print("")
-        return {}
+        return []
     return res
     
 
 
-def get_view_detail(schema: str, view: str, tag: str):
+def get_view_detail(schema: str, view: str, tag: str) -> list:
     """[{}...]"""
     comando = f"""
     select 
@@ -524,7 +537,7 @@ def get_view_detail(schema: str, view: str, tag: str):
         hsql.print_error()
         hsql.clear_error()
         print("")
-        return {}
+        return []
     return res
 
 

@@ -97,7 +97,16 @@ table caption {
     width: 90%;
 }
 
-.column{
+.uni-column{
+    display: list-item;
+    list-style-type: circle;
+    float: left;
+    width: 100%;
+}
+
+.bi-column{
+    display: list-item;
+    list-style-type: circle;
     float: left;
     width: 50%;
 }
@@ -106,7 +115,14 @@ table caption {
     display: list-item;
     list-style-type: circle;
     float: left;
-    width: 30%;
+    width: 33%;
+  }
+
+.cuad-column {
+    display: list-item;
+    list-style-type: circle;
+    float: left;
+    width: 25%;
   }
   
   /* Clear floats after the columns */
@@ -149,7 +165,7 @@ table caption {
             <div><a href="#tablas"><h2>Tablas</h2></a></div>
             <div class="row">
                 {% for table in tables %}
-                    <div class="tri-column"><a href="#{{ table[0] }}.{{ table[1] }}">{{ table[0] }}.{{ table[1] }}</a></div>
+                    <div class="{{ index_column_class }}"><a href="#{{ table[0] }}.{{ table[1] }}">{{ table[0] }}.{{ table[1] }}</a></div>
                 {% endfor%}            
             </div>
         {% endif %}
@@ -159,7 +175,7 @@ table caption {
             <div><a href="#vistas"><h2>Vistas</h2></a></div>
             <div class="row">
                 {% for view in views %}
-                    <div class="tri-column"><a href="#{{ view[0] }}.{{ view[1] }}">{{ view[0] }}.{{ view[1] }}</a></div>
+                    <div class="{{ index_column_class }}"><a href="#{{ view[0] }}.{{ view[1] }}">{{ view[0] }}.{{ view[1] }}</a></div>
                 {% endfor %}
             </div>
         {% endif %}
@@ -169,7 +185,7 @@ table caption {
             <div><a href="#procedimientos"><h2>Procedimientos</h2></a></div>
             <div class="row">
                 {% for proc in procs %}
-                    <div class="tri-column"><a href="#{{ proc[0] }}.{{ proc[1] }}">{{ proc[0] }}.{{ proc[1] }}</a></div>
+                    <div class="{{ index_column_class }}"><a href="#{{ proc[0] }}.{{ proc[1] }}">{{ proc[0] }}.{{ proc[1] }}</a></div>
                 {% endfor %}    
             </div>
         {% endif %}
@@ -179,7 +195,7 @@ table caption {
             <div><a href="#scalar_funcs"><h2>Funciones Escalares</h2></a></div>
             <div class="row">
                 {% for func in scalar_funcs %}
-                    <div class="tri-column"><a href="#{{ func[0] }}.{{ func[1] }}">{{ func[0] }}.{{ func[1] }}</a></div>
+                    <div class="{{ index_column_class }}"><a href="#{{ func[0] }}.{{ func[1] }}">{{ func[0] }}.{{ func[1] }}</a></div>
                 {% endfor %}
             </div>
 
@@ -187,7 +203,7 @@ table caption {
             <div><a href="#tab_funcs"><h2>Funciones Tabulares</h2></a></div>
             <div class="row">
                 {% for func in tbl_funcs %}
-                    <div class="tri-column"><a href="#{{ func[0] }}.{{ func[1] }}">{{ func[0] }}.{{ func[1] }}</a></div>
+                    <div class="{{ index_column_class }}"><a href="#{{ func[0] }}.{{ func[1] }}">{{ func[0] }}.{{ func[1] }}</a></div>
                 {% endfor %}
             </div>
         {% endif %}
